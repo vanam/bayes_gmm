@@ -39,13 +39,13 @@ def main():
     plt.show()
 
     # Pickle for reading in Python
-    print "Writing to pickle file: " + BASENAME + ".pkl"
+    print("Writing to pickle file: " + BASENAME + ".pkl")
     output = open(BASENAME + ".pkl", "wb")
     pickle.dump(X, output)
     output.close()
 
     # Convert to .mat for reading in Matlab
-    print "Writing to .mat file: " + BASENAME + ".mat"
+    print("Writing to .mat file: " + BASENAME + ".mat")
     scipy.io.savemat(BASENAME + ".mat", {"X": X})
 
 

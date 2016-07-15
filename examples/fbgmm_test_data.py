@@ -61,7 +61,7 @@ def main():
 
     # Setup FBGMM
     fbgmm = FBGMM(X, prior, alpha, K, assignments=z)
-    print "Initial log marginal prob:", fbgmm.log_marg()
+    print("Initial log marginal prob:", fbgmm.log_marg())
 
     # Perform several Gibbs sampling runs and average the log marginals
     log_margs = np.zeros(n_iter)
@@ -75,13 +75,13 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plot_mixture_model(ax, fbgmm)
-    for k in xrange(fbgmm.components.K):
+    for k in range(fbgmm.components.K):
         mu, sigma = fbgmm.components.rand_k(k)
         plot_ellipse(ax, mu, sigma)
 
     # Plot log probability
     plt.figure()
-    plt.plot(range(n_iter), log_margs)
+    plt.plot(list(range(n_iter)), log_margs)
     plt.xlabel("Iterations")
     plt.ylabel("Log prob")
 

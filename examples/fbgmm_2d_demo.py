@@ -63,7 +63,7 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plot_mixture_model(ax, fbgmm)
-    for k in xrange(fbgmm.components.K):
+    for k in range(fbgmm.components.K):
         mu, sigma = fbgmm.components.rand_k(k)
         plot_ellipse(ax, mu, sigma)
     plt.show()

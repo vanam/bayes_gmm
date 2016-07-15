@@ -1,0 +1,519 @@
+RefactoringTool: Skipping optional fixer: buffer
+RefactoringTool: Skipping optional fixer: idioms
+RefactoringTool: Skipping optional fixer: set_literal
+RefactoringTool: Skipping optional fixer: ws_comma
+RefactoringTool: Refactored .\bayes_gmm\fbgmm.py
+RefactoringTool: Refactored .\bayes_gmm\gaussian_components.py
+RefactoringTool: Refactored .\bayes_gmm\gaussian_components_diag.py
+RefactoringTool: Refactored .\bayes_gmm\gaussian_components_fixedvar.py
+RefactoringTool: Refactored .\bayes_gmm\igmm.py
+--- .\bayes_gmm\fbgmm.py	(original)
++++ .\bayes_gmm\fbgmm.py	(refactored)
+@@ -10,10 +10,10 @@
+ import numpy as np
+ import time
+ 
+-from gaussian_components import GaussianComponents
+-from gaussian_components_diag import GaussianComponentsDiag
+-from gaussian_components_fixedvar import GaussianComponentsFixedVar
+-import utils
++from .gaussian_components import GaussianComponents
++from .gaussian_components_diag import GaussianComponentsDiag
++from .gaussian_components_fixedvar import GaussianComponentsFixedVar
++from . import utils
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -63,7 +63,7 @@
+             assignments = np.random.randint(0, K, N)
+ 
+             # Make sure we have consequetive values
+-            for k in xrange(assignments.max()):
++            for k in range(assignments.max()):
+                 while len(np.nonzero(assignments == k)[0]) == 0:
+                     assignments[np.where(assignments > k)] -= 1
+                 if assignments.max() == k:
+@@ -125,7 +125,7 @@
+         for i_iter in range(n_iter):
+ 
+             # Loop over data items
+-            for i in xrange(self.components.N):
++            for i in range(self.components.N):
+ 
+                 # Cache some old values for possible future use
+                 k_old = self.components.assignments[i]
+@@ -189,7 +189,7 @@
+ 
+     import random
+ 
+-    from niw import NIW
++    from .niw import NIW
+ 
+     logging.basicConfig(level=logging.INFO)
+ 
+--- .\bayes_gmm\gaussian_components.py	(original)
++++ .\bayes_gmm\gaussian_components.py	(refactored)
+@@ -10,7 +10,7 @@
+ import math
+ import numpy as np
+ 
+-import wishart
++from . import wishart
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -114,7 +114,7 @@
+         self._cached_prior_outer_m_0 = np.outer(self.prior.m_0, self.prior.m_0)
+ 
+         self._cached_outer = np.zeros((self.N, self.D, self.D), np.float)
+-        for i in xrange(self.N):
++        for i in range(self.N):
+             self._cached_outer[i, :, :] = np.outer(self.X[i], self.X[i])
+ 
+         n = np.concatenate([[1], np.arange(1, self.prior.v_0 + self.N + 2)])  # first element dud for indexing
+@@ -123,7 +123,7 @@
+         self._cached_log_pi = math.log(np.pi)
+ 
+         self.cached_log_prior = np.zeros(self.N, np.float)
+-        for i in xrange(self.N):
++        for i in range(self.N):
+             self.cached_log_prior[i] = self.log_prior(i)
+ 
+     def cache_component_stats(self, k):
+@@ -284,7 +284,7 @@
+         p(X|z) = p(x_1, x_2, ... x_N | z_1, z_2, ..., z_N) is returned.
+         """
+         log_prob_X_given_z = 0.
+-        for k in xrange(self.K):
++        for k in range(self.K):
+             log_prob_X_given_z += self.log_marg_k(k)
+         return log_prob_X_given_z
+ 
+@@ -369,7 +369,7 @@
+ 
+ def main():
+ 
+-    from niw import NIW
++    from .niw import NIW
+ 
+ 
+     # LOG POSTERIOR EXAMPLE
+@@ -382,9 +382,9 @@
+         ]), prior)
+     gmm.add_item(0, 0)
+     gmm.add_item(1, 0)
+-    print "Log prior of [0.5, 0.4, 0.3]:", gmm.log_prior(2)
+-    print "Log posterior of [0.5, 0.4, 0.3]:", gmm.log_post_pred_k(2, 0)
+-    print
++    print("Log prior of [0.5, 0.4, 0.3]:", gmm.log_prior(2))
++    print("Log posterior of [0.5, 0.4, 0.3]:", gmm.log_post_pred_k(2, 0))
++    print()
+ 
+ 
+     # ADDING AND REMOVING DATA VECTORS EXAMPLE
+@@ -395,15 +395,15 @@
+         [-0.1, 0.8],
+         [0.5, 0.4]
+         ]), prior)
+-    print "Log prior of [1.2, 0.9]:", gmm.log_prior(0)
++    print("Log prior of [1.2, 0.9]:", gmm.log_prior(0))
+     gmm.add_item(0, 0)
+     gmm.add_item(1, 0)
+-    print "Log posterior of [0.5, 0.4]:", gmm.log_post_pred_k(2, 0)
++    print("Log posterior of [0.5, 0.4]:", gmm.log_post_pred_k(2, 0))
+     gmm.add_item(2, 0)
+-    print "Log posterior of [0.5, 0.4] after adding:", gmm.log_post_pred_k(2, 0)
++    print("Log posterior of [0.5, 0.4] after adding:", gmm.log_post_pred_k(2, 0))
+     gmm.del_item(2)
+-    print "Log posterior of [0.5, 0.4] after removing:", gmm.log_post_pred_k(2, 0)
+-    print
++    print("Log posterior of [0.5, 0.4] after removing:", gmm.log_post_pred_k(2, 0))
++    print()
+ 
+ 
+     # LOG MARGINAL EXAMPLE
+@@ -426,8 +426,8 @@
+ 
+     # Calculate log marginal of data
+     log_marg = gmm.log_marg_k(0)
+-    print "Log marginal:", gmm.log_marg_k(0)
+-    print
++    print("Log marginal:", gmm.log_marg_k(0))
++    print()
+ 
+ 
+     # HIGHER DIMENSIONAL EXAMPLE
+@@ -456,10 +456,10 @@
+     prior = NIW(m_0, k_0, v_0, S_0)
+     gmm = GaussianComponents(X, prior, [0, 0, 0, 1, 0, 1, 3, 4, 3, 2, -1])
+ 
+-    print "Consider vector:", X[10]
+-    print "Log post predictive:", log_post_pred_unvectorized(gmm, 10)
+-    print "Log post predictive:", gmm.log_post_pred(10)
+-    print "Log marginal for component 0:", gmm.log_marg_k(0)
++    print("Consider vector:", X[10])
++    print("Log post predictive:", log_post_pred_unvectorized(gmm, 10))
++    print("Log post predictive:", gmm.log_post_pred(10))
++    print("Log marginal for component 0:", gmm.log_marg_k(0))
+ 
+ if __name__ == "__main__":
+     main()
+--- .\bayes_gmm\gaussian_components_diag.py	(original)
++++ .\bayes_gmm\gaussian_components_diag.py	(refactored)
+@@ -131,7 +131,7 @@
+         self._cached_log_pi = math.log(np.pi)
+ 
+         self.cached_log_prior = np.zeros(self.N, np.float)
+-        for i in xrange(self.N):
++        for i in range(self.N):
+             self.cached_log_prior[i] = self.log_prior(i)
+ 
+     def cache_component_stats(self, k):
+@@ -298,7 +298,7 @@
+         p(X|z) = p(x_1, x_2, ... x_N | z_1, z_2, ..., z_N) is returned.
+         """
+         log_prob_X_given_z = 0.
+-        for k in xrange(self.K):
++        for k in range(self.K):
+             log_prob_X_given_z += self.log_marg_k(k)
+         return log_prob_X_given_z
+ 
+@@ -406,7 +406,7 @@
+ 
+ def main():
+ 
+-    from niw import NIW
++    from .niw import NIW
+ 
+     # logging.basicConfig(level=logging.DEBUG)
+ 
+@@ -443,12 +443,12 @@
+     S_N = S_0 + np.square(X[:N]).sum(axis=0) + k_0*np.square(m_0) - k_N*np.square(m_N)
+     var = S_N*(k_N + 1)/(k_N*v_N)
+ 
+-    print "Log posterior of " + str(x) + ":", gmm.log_post_pred_k(0, 0)
+-    print (
++    print("Log posterior of " + str(x) + ":", gmm.log_post_pred_k(0, 0))
++    print((
+         "Log posterior of " + str(x) + ": " +
+         str(np.sum([students_t(x[i], m_N[i], S_N[i]*(k_N + 1)/(k_N*v_N), v_N) for i in range(len(x))]))
+-        )
+-    print
++        ))
++    print()
+ 
+ 
+     # MULTIPLE COMPONENT EXAMPLE
+@@ -477,10 +477,10 @@
+     prior = NIW(m_0, k_0, v_0, S_0)
+     gmm = GaussianComponentsDiag(X, prior, [0, 0, 0, 1, 0, 1, 3, 4, 3, 2, -1])
+ 
+-    print "Consider vector:", X[10]
+-    print "Log post predictive:", log_post_pred_unvectorized(gmm, 10)
+-    print "Log post predictive:", gmm.log_post_pred(10)
+-    print "Log marginal for component 0:", gmm.log_marg_k(0)
++    print("Consider vector:", X[10])
++    print("Log post predictive:", log_post_pred_unvectorized(gmm, 10))
++    print("Log post predictive:", gmm.log_post_pred(10))
++    print("Log marginal for component 0:", gmm.log_marg_k(0))
+ 
+ 
+ if __name__ == "__main__":
+--- .\bayes_gmm\gaussian_components_fixedvar.py	(original)
++++ .\bayes_gmm\gaussian_components_fixedvar.py	(refactored)
+@@ -115,7 +115,7 @@
+     def _cache(self):
+         self._cached_neg_half_D_log_2pi = -0.5*self.D*math.log(2.*np.pi)
+         self.cached_log_prior = np.zeros(self.N, np.float)
+-        for i in xrange(self.N):
++        for i in range(self.N):
+             self.cached_log_prior[i] = self.log_prior(i)
+ 
+     def cache_component_stats(self, k):
+@@ -259,7 +259,7 @@
+         p(X|z) = p(x_1, x_2, ... x_N | z_1, z_2, ..., z_N) is returned.
+         """
+         log_prob_X_given_z = 0.
+-        for k in xrange(self.K):
++        for k in range(self.K):
+             log_prob_X_given_z += self.log_marg_k(k)
+         return log_prob_X_given_z
+ 
+--- .\bayes_gmm\igmm.py	(original)
++++ .\bayes_gmm\igmm.py	(refactored)
+@@ -12,10 +12,10 @@
+ import numpy as np
+ import time
+ 
+-from gaussian_components import GaussianComponents
+-from gaussian_components_diag import GaussianComponentsDiagRefactoringTool: No changes to .\bayes_gmm\niw.py
+RefactoringTool: Refactored .\bayes_gmm\utils.py
+RefactoringTool: Refactored .\bayes_gmm\wishart.py
+RefactoringTool: Refactored .\bayes_gmm\tests\test_fbgmm.py
+RefactoringTool: No changes to .\bayes_gmm\tests\test_gaussian_components.py
+RefactoringTool: No changes to .\bayes_gmm\tests\test_gaussian_components_diag.py
+RefactoringTool: No changes to .\bayes_gmm\tests\test_gaussian_components_fixedvar.py
+RefactoringTool: Refactored .\bayes_gmm\tests\test_igmm.py
+RefactoringTool: Refactored .\examples\fbgmm_2d_demo.py
+RefactoringTool: Refactored .\examples\fbgmm_diag_2d_demo.py
+RefactoringTool: Refactored .\examples\fbgmm_fixedvar_2d_demo.py
+RefactoringTool: Refactored .\examples\fbgmm_test_data.py
+RefactoringTool: Refactored .\examples\igmm_2d_demo.py
+RefactoringTool: Refactored .\examples\igmm_diag_2d_demo.py
+RefactoringTool: Refactored .\examples\igmm_fixedvar_2d_demo.py
+RefactoringTool: Refactored .\examples\igmm_test_data.py
+RefactoringTool: No changes to .\examples\plot_utils.py
+RefactoringTool: Refactored .\misc\generate_test_data.py
+RefactoringTool: No changes to .\misc\plot_test_data.py
+RefactoringTool: Files that need to be modified:
+RefactoringTool: .\bayes_gmm\fbgmm.py
+RefactoringTool: .\bayes_gmm\gaussian_components.py
+RefactoringTool: .\bayes_gmm\gaussian_components_diag.py
+RefactoringTool: .\bayes_gmm\gaussian_components_fixedvar.py
+RefactoringTool: .\bayes_gmm\igmm.py
+RefactoringTool: .\bayes_gmm\niw.py
+RefactoringTool: .\bayes_gmm\utils.py
+RefactoringTool: .\bayes_gmm\wishart.py
+RefactoringTool: .\bayes_gmm\tests\test_fbgmm.py
+RefactoringTool: .\bayes_gmm\tests\test_gaussian_components.py
+RefactoringTool: .\bayes_gmm\tests\test_gaussian_components_diag.py
+RefactoringTool: .\bayes_gmm\tests\test_gaussian_components_fixedvar.py
+RefactoringTool: .\bayes_gmm\tests\test_igmm.py
+RefactoringTool: .\examples\fbgmm_2d_demo.py
+RefactoringTool: .\examples\fbgmm_diag_2d_demo.py
+RefactoringTool: .\examples\fbgmm_fixedvar_2d_demo.py
+RefactoringTool: .\examples\fbgmm_test_data.py
+RefactoringTool: .\examples\igmm_2d_demo.py
+RefactoringTool: .\examples\igmm_diag_2d_demo.py
+RefactoringTool: .\examples\igmm_fixedvar_2d_demo.py
+RefactoringTool: .\examples\igmm_test_data.py
+RefactoringTool: .\examples\plot_utils.py
+RefactoringTool: .\misc\generate_test_data.py
+RefactoringTool: .\misc\plot_test_data.py
+
+-from gaussian_components_fixedvar import GaussianComponentsFixedVar
+-import utils
++from .gaussian_components import GaussianComponents
++from .gaussian_components_diag import GaussianComponentsDiag
++from .gaussian_components_fixedvar import GaussianComponentsFixedVar
++from . import utils
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -66,7 +66,7 @@
+             assignments = np.random.randint(0, K, N)
+ 
+             # Make sure we have consequetive values
+-            for k in xrange(assignments.max()):
++            for k in range(assignments.max()):
+                 while len(np.nonzero(assignments == k)[0]) == 0:
+                     assignments[np.where(assignments > k)] -= 1
+                 if assignments.max() == k:
+@@ -133,7 +133,7 @@
+             # permuted = range(self.components.N)
+             # random.shuffle(permuted)
+             # for i in permuted:
+-            for i in xrange(self.components.N):
++            for i in range(self.components.N):
+ 
+                 # Cache some old values for possible future use
+                 k_old = self.components.assignments[i]
+@@ -190,7 +190,7 @@
+ 
+     import random
+ 
+-    from niw import NIW
++    from .niw import NIW
+ 
+     logging.basicConfig(level=logging.INFO)
+ 
+--- .\bayes_gmm\utils.py	(original)
++++ .\bayes_gmm\utils.py	(refactored)
+@@ -14,7 +14,7 @@
+     Indices returned are between 0 and len(p_k) - 1.
+     """
+     k_uni = random.random()
+-    for i in xrange(len(p_k)):
++    for i in range(len(p_k)):
+         k_uni = k_uni - p_k[i]
+         if k_uni < 0:
+             return i
+--- .\bayes_gmm\wishart.py	(original)
++++ .\bayes_gmm\wishart.py	(refactored)
+@@ -19,7 +19,7 @@
+         C = np.linalg.cholesky(sigma)
+     D = sigma.shape[0]
+     a = np.zeros((D, D), dtype=np.float32)
+-    for r in xrange(D):
++    for r in range(D):
+         if r != 0:
+             a[r, :r] = np.random.normal(size=(r,))
+         a[r, r] = math.sqrt(random.gammavariate(0.5*(v_0 - D + 1), 2.0))
+--- .\bayes_gmm\tests\test_fbgmm.py	(original)
++++ .\bayes_gmm\tests\test_fbgmm.py	(refactored)
+@@ -183,6 +183,6 @@
+     expected_log_marg = -60.1448630929
+     log_marg = fbgmm.log_marg()
+ 
+-    print fbgmm.components.assignments
++    print(fbgmm.components.assignments)
+ 
+     npt.assert_almost_equal(log_marg, expected_log_marg)
+--- .\bayes_gmm\tests\test_igmm.py	(original)
++++ .\bayes_gmm\tests\test_igmm.py	(refactored)
+@@ -168,7 +168,7 @@
+     mu = np.random.randn(D, K_true)*mu_scale
+     X = mu[:, z_true] + np.random.randn(D, N)*covar_scale
+     X = X.T
+-    print X
++    print(X)
+ 
+     # Intialize prior
+     m_0 = np.zeros(D)
+@@ -182,7 +182,7 @@
+ 
+     # Perform Gibbs sampling
+     record = igmm.gibbs_sample(n_iter)
+-    print igmm.components.assignments
++    print(igmm.components.assignments)
+ 
+     expected_log_marg = -30.771535771
+     log_marg = igmm.log_marg()
+--- .\examples\fbgmm_2d_demo.py	(original)
++++ .\examples\fbgmm_2d_demo.py	(refactored)
+@@ -63,7 +63,7 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, fbgmm)
+-    for k in xrange(fbgmm.components.K):
++    for k in range(fbgmm.components.K):
+         mu, sigma = fbgmm.components.rand_k(k)
+         plot_ellipse(ax, mu, sigma)
+     plt.show()
+--- .\examples\fbgmm_diag_2d_demo.py	(original)
++++ .\examples\fbgmm_diag_2d_demo.py	(refactored)
+@@ -63,7 +63,7 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, fbgmm)
+-    for k in xrange(fbgmm.components.K):
++    for k in range(fbgmm.components.K):
+         mu, sigma = fbgmm.components.rand_k(k)
+         plot_ellipse(ax, mu, np.diag(sigma))
+     plt.show()
+--- .\examples\fbgmm_fixedvar_2d_demo.py	(original)
++++ .\examples\fbgmm_fixedvar_2d_demo.py	(refactored)
+@@ -64,7 +64,7 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, fbgmm)
+-    for k in xrange(fbgmm.components.K):
++    for k in range(fbgmm.components.K):
+         mu = fbgmm.components.rand_k(k)
+         sigma = np.diag(var)
+         plot_ellipse(ax, mu, sigma)
+--- .\examples\fbgmm_test_data.py	(original)
++++ .\examples\fbgmm_test_data.py	(refactored)
+@@ -61,7 +61,7 @@
+ 
+     # Setup FBGMM
+     fbgmm = FBGMM(X, prior, alpha, K, assignments=z)
+-    print "Initial log marginal prob:", fbgmm.log_marg()
++    print("Initial log marginal prob:", fbgmm.log_marg())
+ 
+     # Perform several Gibbs sampling runs and average the log marginals
+     log_margs = np.zeros(n_iter)
+@@ -75,13 +75,13 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, fbgmm)
+-    for k in xrange(fbgmm.components.K):
++    for k in range(fbgmm.components.K):
+         mu, sigma = fbgmm.components.rand_k(k)
+         plot_ellipse(ax, mu, sigma)
+ 
+     # Plot log probability
+     plt.figure()
+-    plt.plot(range(n_iter), log_margs)
++    plt.plot(list(range(n_iter)), log_margs)
+     plt.xlabel("Iterations")
+     plt.ylabel("Log prob")
+ 
+--- .\examples\igmm_2d_demo.py	(original)
++++ .\examples\igmm_2d_demo.py	(refactored)
+@@ -64,7 +64,7 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, igmm)
+-    for k in xrange(igmm.components.K):
++    for k in range(igmm.components.K):
+         mu, sigma = igmm.components.rand_k(k)
+         plot_ellipse(ax, mu, sigma)
+     plt.show()
+--- .\examples\igmm_diag_2d_demo.py	(original)
++++ .\examples\igmm_diag_2d_demo.py	(refactored)
+@@ -64,7 +64,7 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, igmm)
+-    for k in xrange(igmm.components.K):
++    for k in range(igmm.components.K):
+         mu, sigma = igmm.components.rand_k(k)
+         plot_ellipse(ax, mu, np.diag(sigma))
+     plt.show()
+--- .\examples\igmm_fixedvar_2d_demo.py	(original)
++++ .\examples\igmm_fixedvar_2d_demo.py	(refactored)
+@@ -64,7 +64,7 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, igmm)
+-    for k in xrange(igmm.components.K):
++    for k in range(igmm.components.K):
+         mu = igmm.components.rand_k(k)
+         sigma = np.diag(var)
+         plot_ellipse(ax, mu, sigma)
+--- .\examples\igmm_test_data.py	(original)
++++ .\examples\igmm_test_data.py	(refactored)
+@@ -61,7 +61,7 @@
+     
+     # Setup IGMM
+     igmm = IGMM(X, prior, alpha, assignments=z)
+-    print "Initial log marginal prob:", igmm.log_marg()
++    print("Initial log marginal prob:", igmm.log_marg())
+ 
+     # Perform several Gibbs sampling runs and average the log marginals
+     log_margs = np.zeros(n_iter)
+@@ -75,13 +75,13 @@
+     fig = plt.figure()
+     ax = fig.add_subplot(111)
+     plot_mixture_model(ax, igmm)
+-    for k in xrange(igmm.components.K):
++    for k in range(igmm.components.K):
+         mu, sigma = igmm.components.rand_k(k)
+         plot_ellipse(ax, mu, sigma)
+ 
+     # Plot log probability
+     plt.figure()
+-    plt.plot(range(n_iter), log_margs)
++    plt.plot(list(range(n_iter)), log_margs)
+     plt.xlabel("Iterations")
+     plt.ylabel("Log prob")
+ 
+--- .\misc\generate_test_data.py	(original)
++++ .\misc\generate_test_data.py	(refactored)
+@@ -39,13 +39,13 @@
+     plt.show()
+ 
+     # Pickle for reading in Python
+-    print "Writing to pickle file: " + BASENAME + ".pkl"
++    print("Writing to pickle file: " + BASENAME + ".pkl")
+     output = open(BASENAME + ".pkl", "wb")
+     pickle.dump(X, output)
+     output.close()
+ 
+     # Convert to .mat for reading in Matlab
+-    print "Writing to .mat file: " + BASENAME + ".mat"
++    print("Writing to .mat file: " + BASENAME + ".mat")
+     scipy.io.savemat(BASENAME + ".mat", {"X": X})
+ 
+ 

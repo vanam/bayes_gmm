@@ -12,10 +12,10 @@ import math
 import numpy as np
 import time
 
-from gaussian_components import GaussianComponents
-from gaussian_components_diag import GaussianComponentsDiag
-from gaussian_components_fixedvar import GaussianComponentsFixedVar
-import utils
+from .gaussian_components import GaussianComponents
+from .gaussian_components_diag import GaussianComponentsDiag
+from .gaussian_components_fixedvar import GaussianComponentsFixedVar
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class IGMM(object):
             assignments = np.random.randint(0, K, N)
 
             # Make sure we have consequetive values
-            for k in xrange(assignments.max()):
+            for k in range(assignments.max()):
                 while len(np.nonzero(assignments == k)[0]) == 0:
                     assignments[np.where(assignments > k)] -= 1
                 if assignments.max() == k:
@@ -133,7 +133,7 @@ class IGMM(object):
             # permuted = range(self.components.N)
             # random.shuffle(permuted)
             # for i in permuted:
-            for i in xrange(self.components.N):
+            for i in range(self.components.N):
 
                 # Cache some old values for possible future use
                 k_old = self.components.assignments[i]
@@ -190,7 +190,7 @@ def main():
 
     import random
 
-    from niw import NIW
+    from .niw import NIW
 
     logging.basicConfig(level=logging.INFO)
 

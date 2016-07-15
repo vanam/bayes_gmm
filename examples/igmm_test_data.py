@@ -61,7 +61,7 @@ def main():
     
     # Setup IGMM
     igmm = IGMM(X, prior, alpha, assignments=z)
-    print "Initial log marginal prob:", igmm.log_marg()
+    print("Initial log marginal prob:", igmm.log_marg())
 
     # Perform several Gibbs sampling runs and average the log marginals
     log_margs = np.zeros(n_iter)
@@ -75,13 +75,13 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plot_mixture_model(ax, igmm)
-    for k in xrange(igmm.components.K):
+    for k in range(igmm.components.K):
         mu, sigma = igmm.components.rand_k(k)
         plot_ellipse(ax, mu, sigma)
 
     # Plot log probability
     plt.figure()
-    plt.plot(range(n_iter), log_margs)
+    plt.plot(list(range(n_iter)), log_margs)
     plt.xlabel("Iterations")
     plt.ylabel("Log prob")
 

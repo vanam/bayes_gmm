@@ -64,7 +64,7 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plot_mixture_model(ax, igmm)
-    for k in xrange(igmm.components.K):
+    for k in range(igmm.components.K):
         mu, sigma = igmm.components.rand_k(k)
         plot_ellipse(ax, mu, np.diag(sigma))
     plt.show()
