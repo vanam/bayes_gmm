@@ -15,7 +15,7 @@ import random
 
 def wishrnd(sigma, v_0, C=None):
     """Return a sample from a Wishart distribution."""
-    if C == None:
+    if C is None:
         C = np.linalg.cholesky(sigma)
     D = sigma.shape[0]
     a = np.zeros((D, D), dtype=np.float32)

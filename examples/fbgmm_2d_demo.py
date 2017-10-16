@@ -18,7 +18,7 @@ sys.path.append("..")
 
 from bayes_gmm.niw import NIW
 from bayes_gmm.fbgmm import FBGMM
-from plot_utils import plot_ellipse, plot_mixture_model
+from examples.plot_utils import plot_ellipse, plot_mixture_model
 
 logging.basicConfig(level=logging.INFO)
 
@@ -64,6 +64,7 @@ def main():
     ax = fig.add_subplot(111)
     plot_mixture_model(ax, fbgmm)
     for k in range(fbgmm.components.K):
+        # mu, sigma = fbgmm.components.map(k)
         mu, sigma = fbgmm.components.rand_k(k)
         plot_ellipse(ax, mu, sigma)
     plt.show()

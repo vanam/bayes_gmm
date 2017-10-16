@@ -12,3 +12,5 @@
 !*.ipynb
 !Makefile
 ./doc/
+!Pipfile
+!Pipfile.lock
