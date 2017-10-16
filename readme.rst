@@ -41,4 +41,4 @@ In the code, references are made to the following:
 
 Some notes on the mathematical details can also be found at:
 
-- http://www.kamperh.com/notes/kamper_bayesgmm13.pdf
+- http://www.kamperh.com/notes/kamper_bayesgmm15.pdf
